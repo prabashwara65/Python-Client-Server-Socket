@@ -1,29 +1,30 @@
 import socket
 
 HEADER = 64
-PORT= 5000
-FORMAT = 'utf- 8'
-DISSCONNECT_MESSAGE = "!!DISSCONNECT"
-SERVER = '127.0.0.1'
-ADDR = (SERVER , PORT)
+PORT = 5000
+SERVER = "127.0.0.1"  # Or use the server IP address
+ADDR = (SERVER, PORT)
+DISCONNECT_MESSAGE = "!!DISCONNECT"
 
-client = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
 
+def send_request():
+    while True:
+        message = input("Send a message: ")
+        if message == DISCONNECT_MESSAGE:
+            break
+        msg_length = len(message)
+        send_length = str(msg_length).ljust(HEADER)  # Use ljust to ensure the length is correct
+        client.send(send_length.encode())
+        client.send(message.encode())  # Send the message
 
-def send(msg):
-    message = msg.encode(FORMAT)
-    msg_length = len(message)
-    send_length = str(msg_length).encode(FORMAT)
-    send_length += b' ' * (HEADER - len(send_length))
-    client.send(send_length)
-    client.send(message)
+        # Receive a motivational quote from the server
+        quote = client.recv(1024).decode()  # Change the buffer size if needed
+        print(f"Server: {quote}")
 
-# Send messages
-send("Hello from Client!")
-send("How are you, Server?")
+        if message == "ITBIN-2211-xxxx":  # Check if the client sends the close command
+            print("Disconnecting from server...")
+            break
 
-# Disconnect the client
-send(DISCONNECT_MESSAGE)
-
-
+send_request()
