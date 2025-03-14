@@ -35,11 +35,14 @@ def handle_client(conn, addr):
         msg_length = conn.recv(HEADER)
         if msg_length:
             msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode()  # Decode the received message
+
+            # Decode the received message
+            msg = conn.recv(msg_length).decode()  
             
             print(f"[{addr}] {msg}")
 
-            if msg == CLOSE_COMMAND:  # Check if the received message matches the command to close
+            # Check if the received message matches the command to close
+            if msg == CLOSE_COMMAND:  
                 print(f"[{addr}] Closing connection...")
                 connected = False
 
